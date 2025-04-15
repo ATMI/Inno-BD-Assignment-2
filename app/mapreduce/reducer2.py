@@ -5,17 +5,16 @@ def store_df(term: str, df: int) -> None:
 	print("DF", term, df)
 
 
-def store_len(doc: str, length: int) -> None:
-	print("LN", doc, length)
+def store_tf(doc: str, length: int) -> None:
+	print("TF", doc, length)
 
 
 def store(key: str, count: int) -> None:
-	key, task = key.rsplit(":")
-	match task:
-		case "df":
-			store_df(key, count)
-		case "len":
-			store_len(key, count)
+	key, tag = key.rsplit(":")
+	if tag == "df":
+		store_df(key, count)
+	elif tag == "tf":
+		store_tf(key, count)
 
 
 def main() -> None:

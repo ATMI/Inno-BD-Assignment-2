@@ -7,7 +7,7 @@ def main() -> None:
 		term, doc, tf = line.rsplit("\t", 2)
 
 		print(f"{term}:df\t1")
-		print(f"{doc}:len\t{tf}")
+		print(f"{doc}:tf\t{tf}")
 
 
 if __name__ == "__main__":
