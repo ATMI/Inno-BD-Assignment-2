@@ -1,39 +1,46 @@
+import os
 import sys
 
+sys.path.append(os.getcwd())
+import cql
 
-def store_df(term: str, df: int) -> None:
-	print("DF", term, df)
-
-
-def store_tf(doc: str, length: int) -> None:
-	print("TF", doc, length)
-
-
-def store(key: str, count: int) -> None:
-	key, tag = key.rsplit(":")
-	if tag == "df":
-		store_df(key, count)
-	elif tag == "tf":
-		store_tf(key, count)
+INSERT_DF = "INSERT INTO df (term, freq) VALUES (?, ?);"
+INSERT_TF = "INSERT INTO doc_stat (doc, terms) VALUES (?, ?);"
 
 
 def main() -> None:
+	cluster, session = cql.connect()
+	session.set_keyspace("index_keyspace")
+	batch = cql.BatchInserter(session)
+	query = {
+		"df": session.prepare(INSERT_DF),
+		"tf": session.prepare(INSERT_TF),
+	}
+
 	curr_key = None
 	curr_count = 0
+
+	def store() -> None:
+		key, tag = curr_key.rsplit(":")
+		batch.add(query[tag], (key, curr_count))
 
 	for line in sys.stdin:
 		line = line.strip()
 		key, value = line.rsplit("\t")
 
 		if curr_key != key and curr_key:
-			store(curr_key, curr_count)
+			store()
 			curr_count = 0
 
 		curr_key = key
 		curr_count += int(value)
 
 	if curr_key:
-		store(curr_key, curr_count)
+		store()
+
+	batch.close()
+	session.shutdown()
+	cluster.shutdown()
 
 
 if __name__ == "__main__":
