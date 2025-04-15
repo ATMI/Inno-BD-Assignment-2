@@ -11,10 +11,9 @@ INSERT_TF = "INSERT INTO doc_stat (doc, terms) VALUES (?, ?);"
 def main() -> None:
 	cluster, session = cql.connect()
 	session.set_keyspace("index_keyspace")
-	batch = cql.BatchInserter(session)
-	query = {
-		"df": session.prepare(INSERT_DF),
-		"tf": session.prepare(INSERT_TF),
+	batch = {
+		"df": cql.BatchInserter(session, INSERT_DF),
+		"tf": cql.BatchInserter(session, INSERT_TF),
 	}
 
 	curr_key = None
@@ -22,7 +21,7 @@ def main() -> None:
 
 	def store() -> None:
 		key, tag = curr_key.rsplit(":")
-		batch.add(query[tag], (key, curr_count))
+		batch[tag].add((key, curr_count))
 
 	for line in sys.stdin:
 		line = line.strip()
@@ -38,7 +37,8 @@ def main() -> None:
 	if curr_key:
 		store()
 
-	batch.close()
+	for b in batch.values():
+		b.close()
 	session.shutdown()
 	cluster.shutdown()
 

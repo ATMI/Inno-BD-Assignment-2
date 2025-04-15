@@ -1,19 +1,12 @@
 import os
-import re
 import sys
-from typing import Generator
 
-
-class Tokenizer:
-	def __init__(self) -> None:
-		self.pattern = re.compile(r"\w+")
-
-	def __call__(self, text: str) -> Generator[str, None, None]:
-		yield from (m.group() for m in self.pattern.finditer(text))
+sys.path.append(os.getcwd())
+import tok
 
 
 def main() -> None:
-	tokenizer = Tokenizer()
+	tokenizer = tok.Tokenizer()
 	doc = os.environ.get("map_input_file", "unknown")
 	doc = os.path.basename(doc)
 
