@@ -6,9 +6,12 @@ def main() -> None:
 		line = line.strip()
 		term, doc, tf = line.rsplit("\t", 2)
 
-		print(f"{term}:df\t1")
-		print(f"{doc}:tf\t{tf}")
+		print(f"{term}:tf\t{tf}")
+		print(f"{doc}:dl\t{tf}")
 
 
 if __name__ == "__main__":
-	main()
+	try:
+		main()
+	except Exception as e:
+		print(e)

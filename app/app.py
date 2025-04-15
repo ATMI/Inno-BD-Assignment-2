@@ -20,9 +20,10 @@ def main():
 			"""
 		)
 		session.set_keyspace("index_keyspace")
-		session.execute("CREATE TABLE IF NOT EXISTS tf (term TEXT, doc TEXT, freq INT, PRIMARY KEY (term, doc));")
-		session.execute("CREATE TABLE IF NOT EXISTS df (term TEXT, freq INT, PRIMARY KEY (term));")
-		session.execute("CREATE TABLE IF NOT EXISTS doc_stat (doc TEXT, terms INT, PRIMARY KEY (doc));")
+		session.execute("CREATE TABLE IF NOT EXISTS tdf (term TEXT, doc TEXT, freq INT, PRIMARY KEY (term, doc));")
+		session.execute("CREATE TABLE IF NOT EXISTS dl (doc TEXT, len INT, PRIMARY KEY (doc));")
+		session.execute("CREATE TABLE IF NOT EXISTS tf (term TEXT, docs INT, total INT, PRIMARY KEY (term));")
+		# session.execute("CREATE TABLE IF NOT EXISTS tf (term TEXT, docs COUNTER, total COUNTER, PRIMARY KEY (term));")
 	except Exception as _:
 		session.shutdown()
 		cluster.shutdown()

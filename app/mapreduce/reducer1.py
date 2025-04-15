@@ -4,13 +4,13 @@ import sys
 sys.path.append(os.getcwd())
 import cql
 
-INSERT = "INSERT INTO tf (term, doc, freq) VALUES (?, ?, ?);"
+INSERT_TDF = "INSERT INTO tdf (term, doc, freq) VALUES (?, ?, ?);"
 
 
 def main() -> None:
 	cluster, session = cql.connect()
 	session.set_keyspace("index_keyspace")
-	batch = cql.BatchInserter(session, INSERT)
+	batch = cql.BatchInserter(session, INSERT_TDF)
 
 	curr_doc, curr_term = None, None
 	curr_tf = 0
@@ -42,4 +42,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-	main()
+	try:
+		main()
+	except Exception as e:
+		print(e)
